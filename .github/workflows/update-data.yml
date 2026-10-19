@@ -1,0 +1,32 @@
+name: Update fund data
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 5 * * *"
+permissions:
+  contents: write
+concurrency:
+  group: update-fund-data
+  cancel-in-progress: false
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm install
+      - name: Update validated fund data
+        env:
+          SWEDBANK_NORMALIZED_DATA_URL: ${{ vars.SWEDBANK_NORMALIZED_DATA_URL }}
+        run: npm run update-data
+      - name: Commit data changes
+        run: |
+          if git diff --quiet -- public/data/funds.json; then echo "No data changes."; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/data/funds.json
+          git commit -m "chore: update fund NAV data"
+          git push
