@@ -1,40 +1,50 @@
 # Swedbank Fund Charts
 
-A lightweight public website displaying every configured fund's six-month NAV history on one page.
+Ühele lehele koondatud Swedbanki fondide kuue kuu NAV-graafikud. Rakendus kasutab Reacti, TypeScripti, Vite'i ja Recharts'i ning sobib staatiliseks majutuseks näiteks Cloudflare Pagesis.
 
-## Stack
+## Hetkeseis
 
-- React + TypeScript + Vite
-- Recharts
-- JSON data files
-- Node.js + TypeScript update script
-- GitHub Actions daily workflow
-- Cloudflare Pages static hosting
+- Minimalistlik, mobiilis kohanduv kaardipaigutus ja hinnagraafikute komponent on olemas.
+- Fondide ja ajalooliste NAV-hindade automaatne import ei ole veel ühendatud.
+- Rakendus ei näita väljamõeldud hindu: kuni usaldusväärne andmeimport on seadistatud, näidatakse andmeallikate linkidega selgitust.
+- Fondide nimekirja allikas: https://www.swedbank.ee/private/investor/funds/allFunds
+- NAV-ajaloo allikas: https://swedbankrobur.fondlista.se/en/nav
 
-## Status
+## Kohalik käivitamine
 
-The initial frontend scaffold is in place. The actual Swedbank data-source adapter has not yet been implemented. The app intentionally displays an empty state rather than fabricated financial prices. Before publishing real data, verify source endpoints, data completeness, access terms and permission to republish data.
-
-The update script expects a normalized JSON feed configured using the repository Actions variable SWEDBANK_NORMALIZED_DATA_URL. The feed shape is an object with a funds array; each fund has id, name, currency and prices, where each price has an ISO date and numeric nav value. If the variable is unset, the update job safely skips data updates.
-
-## Local development
-
-Requires Node.js 22 or later.
+Vaja on Node.js 22 või uuemat versiooni.
 
     npm install
     npm run dev
 
-## Build
+## Kontroll ja build
 
     npm run typecheck
     npm run build
 
-## Daily update
+## Andmete automaatne uuendamine
 
-GitHub Actions runs daily at 05:17 UTC and can also be started manually in the Actions tab. Configure SWEDBANK_NORMALIZED_DATA_URL only after the actual source adapter and its permitted use have been verified.
+GitHub Actions käivitab uuendustöövoo iga päev kell 05:17 UTC ja seda saab käivitada ka käsitsi. Skript eeldab normaliseeritud JSON-andmevoogu, mis on määratud repositooriumi Actions variable'ina `SWEDBANK_NORMALIZED_DATA_URL`. Enne selle seadistamist tuleb teostada ja kontrollida ühendus fondiloendi ning NAV-ajaloo tegeliku andmeallikaga ning kontrollida andmete taaskasutamise tingimusi.
+
+Andmevoo kuju:
+
+    {
+      "funds": [
+        {
+          "id": "unique-fund-id",
+          "name": "Fund name",
+          "currency": "EUR",
+          "prices": [
+            { "date": "2026-04-20", "nav": 12.34 }
+          ]
+        }
+      ]
+    }
 
 ## Cloudflare Pages
 
-Import this repository into Cloudflare Pages. Use framework preset Vite, build command npm run build, and output directory dist. No always-on backend or Pages Functions are required for the static frontend.
+- Build command: `npm run build`
+- Build output directory: `dist`
+- Node version: 22
 
-NAV is generally published on dealing days, not every calendar day. This website is informational and is not investment advice.
+NAV avaldatakse tavaliselt kauplemispäevadel, mitte igal kalendripäeval. Rakendus on informatiivne ega ole investeerimissoovitus.
