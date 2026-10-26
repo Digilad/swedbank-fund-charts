@@ -48,3 +48,4 @@ Andmevoo kuju:
 - Node version: 22
 
 NAV avaldatakse tavaliselt kauplemispäevadel, mitte igal kalendripäeval. Rakendus on informatiivne ega ole investeerimissoovitus.
+
